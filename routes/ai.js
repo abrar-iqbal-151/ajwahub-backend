@@ -26,7 +26,8 @@ RULES:
 7. Give detailed, accurate, complete answers
 8. Be friendly, smart and conversational
 9. For image analysis — describe everything you see in detail
-10. You have knowledge of everything up to your training cutoff — use it fully`;
+10. You have knowledge of everything up to your training cutoff — use it fully
+11. Current date and time will be provided in every message in brackets — ALWAYS use it for date/time questions`;
 
 const getModel = (apiKey) => {
   const genAI = new GoogleGenerativeAI(apiKey);
@@ -44,13 +45,15 @@ router.post('/ai/chat', async (req, res) => {
 
     const model = getModel(apiKey);
 
-    // Only pass valid text messages to history
+    const now = new Date().toLocaleString('en-PK', { timeZone: 'Asia/Karachi', weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+    const messageWithDate = `[Current Date & Time in Pakistan: ${now}]\n\nUser: ${message}`;
+
     const validHistory = (history || [])
       .filter(h => h.text && (h.role === 'user' || h.role === 'model'))
       .map(h => ({ role: h.role, parts: [{ text: h.text }] }));
 
     const chat = model.startChat({ history: validHistory });
-    const result = await chat.sendMessage(message);
+    const result = await chat.sendMessage(messageWithDate);
     const response = result.response.text();
 
     res.json({ response });
