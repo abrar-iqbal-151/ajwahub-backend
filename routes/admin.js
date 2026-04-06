@@ -149,4 +149,30 @@ router.delete('/admin/wishlists/product/:productId', verifyAdmin, async (req, re
   } catch (err) { res.status(500).json({ message: err.message }); }
 });
 
+// Admin Reset Password (verify old admin token + reset)
+router.post('/admin/reset-password', async (req, res) => {
+  try {
+    const { email, newPassword } = req.body;
+    if (!email || !newPassword) return res.status(400).json({ message: 'All fields required' });
+    const admin = await Admin.findOne({ email: email.toLowerCase() });
+    if (!admin) return res.status(404).json({ message: 'Admin not found', field: 'email' });
+    admin.password = newPassword;
+    await admin.save();
+    res.json({ message: 'Password reset successfully' });
+  } catch (err) {
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// Verify admin email exists
+router.post('/admin/check-email', async (req, res) => {
+  try {
+    const { email } = req.body;
+    const admin = await Admin.findOne({ email: email.toLowerCase() });
+    res.json({ exists: !!admin });
+  } catch {
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
 module.exports = router;
