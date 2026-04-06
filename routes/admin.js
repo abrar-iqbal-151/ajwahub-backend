@@ -22,12 +22,49 @@ const verifyAdmin = (req, res, next) => {
   }
 };
 
-// Admin Signup
+// Generate invite token (only existing admin can do this)
+router.post('/admin/invite', verifyAdmin, async (req, res) => {
+  try {
+    const inviteToken = jwt.sign(
+      { type: 'admin-invite', createdBy: req.admin.adminId },
+      process.env.JWT_ACCESS_SECRET || 'secret-key',
+      { expiresIn: '24h' }
+    );
+    const inviteLink = `${process.env.ADMIN_URL || 'http://localhost:5174'}/signup?invite=${inviteToken}`;
+    res.json({ inviteLink, expiresIn: '24 hours' });
+  } catch (err) {
+    res.status(500).json({ message: 'Error generating invite' });
+  }
+});
+
+// Verify invite token
+router.get('/admin/invite/verify', (req, res) => {
+  const { token } = req.query;
+  if (!token) return res.status(400).json({ valid: false, message: 'No token' });
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_ACCESS_SECRET || 'secret-key');
+    if (decoded.type !== 'admin-invite') return res.status(400).json({ valid: false });
+    res.json({ valid: true });
+  } catch {
+    res.status(400).json({ valid: false, message: 'Invalid or expired invite link' });
+  }
+});
+
+// Admin Signup (requires invite token)
 router.post('/admin/signup', async (req, res) => {
   try {
-    const { name, email, password } = req.body;
+    const { name, email, password, inviteToken } = req.body;
     if (!name || !email || !password)
       return res.status(400).json({ message: 'All fields are required' });
+
+    // Verify invite token
+    if (!inviteToken) return res.status(403).json({ message: 'Invite token required' });
+    try {
+      const decoded = jwt.verify(inviteToken, process.env.JWT_ACCESS_SECRET || 'secret-key');
+      if (decoded.type !== 'admin-invite') return res.status(403).json({ message: 'Invalid invite token' });
+    } catch {
+      return res.status(403).json({ message: 'Invite link expired or invalid' });
+    }
 
     const existing = await Admin.findOne({ email: email.toLowerCase() });
     if (existing)
