@@ -69,8 +69,8 @@ router.post('/shop-products', verifyAdmin, async (req, res) => {
 router.put('/shop-products/:id', verifyAdmin, async (req, res) => {
   try {
     const { name, price, weight, rating, stock, image, description, category } = req.body;
-    const product = await ShopProduct.findOneAndUpdate(
-      { id: Number(req.params.id) },
+    const product = await ShopProduct.findByIdAndUpdate(
+      req.params.id,
       { name, price, weight, rating, stock, image, description, category },
       { new: true }
     );
