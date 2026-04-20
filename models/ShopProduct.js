@@ -9,7 +9,8 @@ const shopProductSchema = new mongoose.Schema({
   stock: { type: Boolean, default: true },
   image: { type: String, default: '' },
   description: { type: String, default: '' },
-  category: { type: String, default: 'dates' }
+  category: { type: String, default: 'dates' },
+  discount: { type: String, default: '' }
 }, { timestamps: true });
 
 module.exports = mongoose.model('ShopProduct', shopProductSchema, 'shop_products');

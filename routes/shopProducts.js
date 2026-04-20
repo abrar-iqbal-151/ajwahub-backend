@@ -68,10 +68,12 @@ router.post('/shop-products', verifyAdmin, async (req, res) => {
 // Update single product
 router.put('/shop-products/:id', verifyAdmin, async (req, res) => {
   try {
-    const { name, price, weight, rating, stock, image, description, category } = req.body;
-    const product = await ShopProduct.findByIdAndUpdate(
-      req.params.id,
-      { name, price, weight, rating, stock, image, description, category },
+    const { name, price, weight, rating, stock, image, description, category, discount } = req.body;
+    const isMongoId = /^[a-f\d]{24}$/i.test(req.params.id);
+    const query = isMongoId ? { _id: req.params.id } : { id: Number(req.params.id) };
+    const product = await ShopProduct.findOneAndUpdate(
+      query,
+      { name, price, weight, rating, stock, image, description, category, discount },
       { new: true }
     );
     if (!product) return res.status(404).json({ message: 'Product not found' });
