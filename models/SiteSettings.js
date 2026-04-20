@@ -12,6 +12,9 @@ const siteSettingsSchema = new mongoose.Schema({
   extraPayments: [{ name: String, number: String, icon: String }],
   shippingCost: { type: Number, default: 200 },
   taxRate: { type: Number, default: 17 },
+  premiumFeaturedTitle: { type: String, default: '⭐ Featured' },
+  premiumFeaturedSubtitle: { type: String, default: 'Top Picks' },
+  premiumSectionTitle: { type: String, default: 'All Premium Products' },
   discountRate: { type: Number, default: 0 },
 }, { timestamps: true });
 
