@@ -70,7 +70,7 @@ router.put('/shop-products/:id', verifyAdmin, async (req, res) => {
   try {
     const { name, price, weight, rating, stock, image, description, category } = req.body;
     const product = await ShopProduct.findOneAndUpdate(
-      { id: req.params.id },
+      { id: Number(req.params.id) },
       { name, price, weight, rating, stock, image, description, category },
       { new: true }
     );
