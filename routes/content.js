@@ -96,17 +96,35 @@ router.get('/content/products', async (req, res) => {
   } catch { res.status(500).json({ message: 'Error fetching products' }); }
 });
 
+router.post('/content/product', verifyAdmin, async (req, res) => {
+  try {
+    const { name, price, discount, stock, description, rating, image, weight, category } = req.body;
+    if (!name || !price) return res.status(400).json({ message: 'Name and price required' });
+    const last = await Product.findOne().sort({ id: -1 });
+    const newId = last ? last.id + 1 : 1;
+    const product = await Product.create({ id: newId, name, price, discount: discount || '', stock: stock !== undefined ? stock : true, description: description || '', rating: rating || 4.5, image: image || '', weight: weight || '1kg', category: category || 'dates' });
+    res.status(201).json({ message: 'Product added', product });
+  } catch { res.status(500).json({ message: 'Error adding product' }); }
+});
+
 router.put('/content/product/:id', verifyAdmin, async (req, res) => {
   try {
-    const { name, price, discount, stock, description, rating, category } = req.body;
+    const { name, price, discount, stock, description, rating, image, category } = req.body;
     const product = await Product.findOneAndUpdate(
       { id: req.params.id },
-      { name, price, discount, stock, description, rating, category },
+      { name, price, discount, stock, description, rating, image, category },
       { new: true }
     );
     if (!product) return res.status(404).json({ message: 'Product not found' });
     res.json({ message: 'Product updated', product });
   } catch { res.status(500).json({ message: 'Error updating product' }); }
+});
+
+router.delete('/content/product/:id', verifyAdmin, async (req, res) => {
+  try {
+    await Product.findOneAndDelete({ id: req.params.id });
+    res.json({ message: 'Product deleted' });
+  } catch { res.status(500).json({ message: 'Error deleting product' }); }
 });
 
 // ── REVIEWS ──
