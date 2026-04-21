@@ -32,7 +32,7 @@ STRICT RULES:
 
 const getModel = (apiKey) => {
   const genAI = new GoogleGenerativeAI(apiKey);
-  return genAI.getGenerativeModel({ model: 'gemini-2.5-flash', systemInstruction: SYSTEM_PROMPT });
+  return genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
 };
 
 // Chat route
@@ -47,14 +47,20 @@ router.post('/ai/chat', async (req, res) => {
     const model = getModel(apiKey);
 
     const now = new Date().toLocaleString('en-PK', { timeZone: 'Asia/Karachi', weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' });
-    const messageWithDate = `[Current Date & Time in Pakistan: ${now}]\n\nUser: ${message}`;
 
     const validHistory = (history || [])
       .filter(h => h.text && (h.role === 'user' || h.role === 'model'))
       .map(h => ({ role: h.role, parts: [{ text: h.text }] }));
 
-    const chat = model.startChat({ history: validHistory });
-    const result = await chat.sendMessage(messageWithDate);
+    // Inject system prompt as first history message
+    const fullHistory = [
+      { role: 'user', parts: [{ text: SYSTEM_PROMPT }] },
+      { role: 'model', parts: [{ text: 'Understood. I will follow all these instructions.' }] },
+      ...validHistory
+    ];
+
+    const chat = model.startChat({ history: fullHistory });
+    const result = await chat.sendMessage(`[Current Date & Time in Pakistan: ${now}]\n\n${message}`);
     const response = result.response.text();
 
     res.json({ response });
@@ -77,19 +83,10 @@ router.post('/ai/image', async (req, res) => {
     const apiKey = process.env.GEMINI_API_KEY;
     const model = getModel(apiKey);
 
+    const systemPrompt = `${SYSTEM_PROMPT}\n\nUser ne image share ki hai.`;
     const prompt = question
-      ? `User ne yeh image share ki hai aur poochha hai: "${question}"
-
-Image ko detail mein analyze karo aur sawaal ka jawab do.
-Language: same as question language.
-No markdown symbols.`
-      : `Is image mein jo bhi hai uska complete analysis karo:
-- Kya hai yeh?
-- Kya dikh raha hai detail mein?
-- Agar food/fruit/product hai to kya hai aur kya faida hai?
-- Agar text hai to parh ke batao
-- Agar koi aur cheez hai to fully describe karo
-Roman Urdu mein jawab do. No markdown.`;
+      ? `${systemPrompt}\n\nUser ka sawaal: "${question}"\n\nImage ko detail mein analyze karo aur sawaal ka jawab do. Language: same as question language. No markdown symbols.`
+      : `${systemPrompt}\n\nIs image mein jo bhi hai uska complete analysis karo:\n- Kya hai yeh?\n- Kya dikh raha hai detail mein?\n- Agar food/fruit/product hai to kya hai aur kya faida hai?\n- Agar text hai to parh ke batao\n- Agar koi aur cheez hai to fully describe karo\nRoman Urdu mein jawab do. No markdown.`;
 
     const result = await model.generateContent([
       { inlineData: { data: imageBase64, mimeType: mimeType || 'image/jpeg' } },
