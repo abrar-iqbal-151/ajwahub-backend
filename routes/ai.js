@@ -32,7 +32,7 @@ STRICT RULES:
 
 const getModel = (apiKey) => {
   const genAI = new GoogleGenerativeAI(apiKey);
-  return genAI.getGenerativeModel({ model: 'gemini-1.5-flash', systemInstruction: SYSTEM_PROMPT });
+  return genAI.getGenerativeModel({ model: 'gemini-2.5-flash', systemInstruction: SYSTEM_PROMPT });
 };
 
 // Chat route
