@@ -7,7 +7,17 @@ const app = express();
 
 app.use(cors({
   origin: function(origin, callback) {
-    callback(null, true);
+    const allowed = [
+      'http://localhost:5173',
+      'http://localhost:5174',
+      'http://localhost:5175',
+      'https://ajwahub.vercel.app',
+      'https://ajwahub-admin.vercel.app',
+      process.env.FRONTEND_URL,
+      process.env.ADMIN_URL
+    ];
+    if (!origin || allowed.includes(origin)) callback(null, true);
+    else callback(null, true); // allow all for now
   },
   credentials: true
 }));
