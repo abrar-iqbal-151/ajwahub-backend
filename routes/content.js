@@ -174,7 +174,20 @@ router.delete('/content/review/:id', verifyAdmin, async (req, res) => {
 // ── FEATURE ──
 router.get('/content/feature', async (req, res) => {
   try {
-    const feature = await Feature.findOne({ key: 'feature1' });
+    let feature = await Feature.findOne({ key: 'feature1' });
+    if (!feature) {
+      feature = await Feature.create({
+        key: 'feature1',
+        title: 'Why Choose AjwaHub?',
+        description: 'We bring you the finest handpicked dates and dry fruits straight from the source. Every product is carefully selected for freshness, taste, and nutritional value.',
+        features: [
+          { icon: '✅', text: '100% Natural & Pure' },
+          { icon: '📦', text: 'Premium Packaging' },
+          { icon: '🚚', text: 'Fast Delivery Across Pakistan' },
+          { icon: '⭐', text: 'Trusted by 50,000+ Customers' }
+        ]
+      });
+    }
     res.json({ feature });
   } catch { res.status(500).json({ message: 'Error fetching feature' }); }
 });
