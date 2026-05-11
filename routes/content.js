@@ -180,6 +180,7 @@ router.get('/content/feature', async (req, res) => {
         key: 'feature1',
         title: 'Why Choose AjwaHub?',
         description: 'We bring you the finest handpicked dates and dry fruits straight from the source. Every product is carefully selected for freshness, taste, and nutritional value.',
+        images: ['/Product 1.png', '/Product 2.png', '/Product 3.png', '/Product 4.png'],
         features: [
           { icon: '✅', text: '100% Natural & Pure' },
           { icon: '📦', text: 'Premium Packaging' },
@@ -194,10 +195,10 @@ router.get('/content/feature', async (req, res) => {
 
 router.put('/content/feature', verifyAdmin, async (req, res) => {
   try {
-    const { title, description, features } = req.body;
+    const { title, description, images, features } = req.body;
     const feature = await Feature.findOneAndUpdate(
       { key: 'feature1' },
-      { title, description, features },
+      { title, description, images, features },
       { new: true, upsert: true }
     );
     res.json({ message: 'Feature updated', feature });
