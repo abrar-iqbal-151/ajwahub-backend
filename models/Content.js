@@ -37,9 +37,16 @@ const featureSchema = new mongoose.Schema({
   }]
 }, { timestamps: true });
 
+const deliveryMapSchema = new mongoose.Schema({
+  key: { type: String, required: true, unique: true, default: 'deliveryMap1' },
+  title: { type: String, default: 'We Deliver Across Pakistan' },
+  mapImage: { type: String, default: '/pakistan-delivery-map.png' }
+}, { timestamps: true });
+
 module.exports = {
   Hero: mongoose.model('Hero', heroSchema, 'description_heroes'),
   Product: mongoose.model('Product', productSchema, 'description_products'),
   Review: mongoose.model('Review', reviewSchema, 'description_reviews'),
-  Feature: mongoose.model('Feature', featureSchema, 'description_features')
+  Feature: mongoose.model('Feature', featureSchema, 'description_features'),
+  DeliveryMap: mongoose.model('DeliveryMap', deliveryMapSchema, 'description_delivery_maps')
 };

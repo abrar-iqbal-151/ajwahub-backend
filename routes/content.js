@@ -1,6 +1,6 @@
 const express = require('express');
 const jwt = require('jsonwebtoken');
-const { Hero, Product, Review, Feature } = require('../models/Content');
+const { Hero, Product, Review, Feature, DeliveryMap } = require('../models/Content');
 
 const router = express.Router();
 
@@ -203,6 +203,33 @@ router.put('/content/feature', verifyAdmin, async (req, res) => {
     );
     res.json({ message: 'Feature updated', feature });
   } catch { res.status(500).json({ message: 'Error updating feature' }); }
+});
+
+// ── DELIVERY MAP ──
+router.get('/content/delivery-map', async (req, res) => {
+  try {
+    let deliveryMap = await DeliveryMap.findOne({ key: 'deliveryMap1' });
+    if (!deliveryMap) {
+      deliveryMap = await DeliveryMap.create({
+        key: 'deliveryMap1',
+        title: 'We Deliver Across Pakistan',
+        mapImage: '/pakistan-delivery-map.png'
+      });
+    }
+    res.json({ deliveryMap });
+  } catch { res.status(500).json({ message: 'Error fetching delivery map' }); }
+});
+
+router.put('/content/delivery-map', verifyAdmin, async (req, res) => {
+  try {
+    const { title, mapImage } = req.body;
+    const deliveryMap = await DeliveryMap.findOneAndUpdate(
+      { key: 'deliveryMap1' },
+      { title, mapImage },
+      { new: true, upsert: true }
+    );
+    res.json({ message: 'Delivery map updated', deliveryMap });
+  } catch { res.status(500).json({ message: 'Error updating delivery map' }); }
 });
 
 module.exports = router;
