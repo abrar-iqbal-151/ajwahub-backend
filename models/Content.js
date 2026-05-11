@@ -26,8 +26,19 @@ const reviewSchema = new mongoose.Schema({
   rating: { type: Number, default: 5 }
 }, { timestamps: true });
 
+const featureSchema = new mongoose.Schema({
+  key: { type: String, required: true, unique: true, default: 'feature1' },
+  title: { type: String, default: 'Why Choose AjwaHub?' },
+  description: { type: String, default: 'We bring you the finest handpicked dates and dry fruits straight from the source. Every product is carefully selected for freshness, taste, and nutritional value.' },
+  features: [{
+    icon: { type: String, default: '✅' },
+    text: { type: String, required: true }
+  }]
+}, { timestamps: true });
+
 module.exports = {
   Hero: mongoose.model('Hero', heroSchema, 'description_heroes'),
   Product: mongoose.model('Product', productSchema, 'description_products'),
-  Review: mongoose.model('Review', reviewSchema, 'description_reviews')
+  Review: mongoose.model('Review', reviewSchema, 'description_reviews'),
+  Feature: mongoose.model('Feature', featureSchema, 'description_features')
 };

@@ -1,6 +1,6 @@
 const express = require('express');
 const jwt = require('jsonwebtoken');
-const { Hero, Product, Review } = require('../models/Content');
+const { Hero, Product, Review, Feature } = require('../models/Content');
 
 const router = express.Router();
 
@@ -31,6 +31,17 @@ router.post('/content/initialize', verifyAdmin, async (req, res) => {
       { key: 'hero1', title: 'Best Ajwa Dates', text: 'Enjoy the sweet taste of real Ajwa dates from Madinah. We pick each date by hand to make sure they are fresh, sweet, and healthy. These dates have been loved by people for many years. Try the best quality dates from nature.', video: '/video(1).mp4' },
       { key: 'hero2', title: 'Many Types', text: 'Check out our different types of dates. We have sweet Sukkari dates that taste like honey, and rich Lahori dates with traditional flavor. Each type has its own special taste and is good for your health. See how good quality makes a difference.', video: '/video(3).mp4' }
     ];
+    const feature = {
+      key: 'feature1',
+      title: 'Why Choose AjwaHub?',
+      description: 'We bring you the finest handpicked dates and dry fruits straight from the source. Every product is carefully selected for freshness, taste, and nutritional value.',
+      features: [
+        { icon: '✅', text: '100% Natural & Pure' },
+        { icon: '📦', text: 'Premium Packaging' },
+        { icon: '🚚', text: 'Fast Delivery Across Pakistan' },
+        { icon: '⭐', text: 'Trusted by 50,000+ Customers' }
+      ]
+    };
     const products = [
       { id: 1, name: 'Ajwa Dates', price: 1200, weight: '1kg', rating: 4.8, stock: true, image: '/Product 1.png', description: '🌟 Sacred Ajwa dates from Madinah - naturally sweet, nutrient-rich, perfect for daily wellness.', discount: '50% OFF' },
       { id: 2, name: 'Medjool Dates', price: 1800, weight: '1kg', rating: 4.7, stock: true, image: '/Product 2.png', description: '👑 King of dates - large, soft, and luxuriously sweet Medjool variety.', discount: '50% OFF' },
@@ -61,6 +72,7 @@ router.post('/content/initialize', verifyAdmin, async (req, res) => {
     ];
 
     for (const h of heroes) await Hero.findOneAndUpdate({ key: h.key }, h, { upsert: true });
+    await Feature.findOneAndUpdate({ key: feature.key }, feature, { upsert: true });
     await Product.insertMany(products);
     await Review.insertMany(reviews);
 
@@ -157,6 +169,26 @@ router.delete('/content/review/:id', verifyAdmin, async (req, res) => {
     await Review.findByIdAndDelete(req.params.id);
     res.json({ message: 'Review deleted' });
   } catch { res.status(500).json({ message: 'Error deleting review' }); }
+});
+
+// ── FEATURE ──
+router.get('/content/feature', async (req, res) => {
+  try {
+    const feature = await Feature.findOne({ key: 'feature1' });
+    res.json({ feature });
+  } catch { res.status(500).json({ message: 'Error fetching feature' }); }
+});
+
+router.put('/content/feature', verifyAdmin, async (req, res) => {
+  try {
+    const { title, description, features } = req.body;
+    const feature = await Feature.findOneAndUpdate(
+      { key: 'feature1' },
+      { title, description, features },
+      { new: true, upsert: true }
+    );
+    res.json({ message: 'Feature updated', feature });
+  } catch { res.status(500).json({ message: 'Error updating feature' }); }
 });
 
 module.exports = router;
