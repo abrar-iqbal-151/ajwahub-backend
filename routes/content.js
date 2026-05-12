@@ -1,6 +1,6 @@
 const express = require('express');
 const jwt = require('jsonwebtoken');
-const { Hero, Product, Review, Feature, DeliveryMap, AboutSection } = require('../models/Content');
+const { Hero, Product, Review, Feature, DeliveryMap, AboutSection, PaymentIcons } = require('../models/Content');
 
 const router = express.Router();
 
@@ -263,6 +263,27 @@ router.put('/content/about', verifyAdmin, async (req, res) => {
     );
     res.json({ message: 'About section updated', about });
   } catch { res.status(500).json({ message: 'Error updating about section' }); }
+});
+
+// ── PAYMENT ICONS ──
+router.get('/content/payment-icons', async (req, res) => {
+  try {
+    let payment = await PaymentIcons.findOne({ key: 'payment1' });
+    if (!payment) payment = await PaymentIcons.create({ key: 'payment1', icons: [] });
+    res.json({ icons: payment.icons });
+  } catch { res.status(500).json({ message: 'Error fetching payment icons' }); }
+});
+
+router.put('/content/payment-icons', verifyAdmin, async (req, res) => {
+  try {
+    const { icons } = req.body;
+    const payment = await PaymentIcons.findOneAndUpdate(
+      { key: 'payment1' },
+      { icons },
+      { new: true, upsert: true }
+    );
+    res.json({ message: 'Payment icons updated', icons: payment.icons });
+  } catch { res.status(500).json({ message: 'Error updating payment icons' }); }
 });
 
 module.exports = router;

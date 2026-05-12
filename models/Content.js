@@ -50,11 +50,17 @@ const aboutSectionSchema = new mongoose.Schema({
   images: [{ type: String }]
 }, { timestamps: true });
 
+const paymentIconsSchema = new mongoose.Schema({
+  key: { type: String, required: true, unique: true, default: 'payment1' },
+  icons: [{ type: String }]
+}, { timestamps: true });
+
 module.exports = {
   Hero: mongoose.model('Hero', heroSchema, 'description_heroes'),
   Product: mongoose.model('Product', productSchema, 'description_products'),
   Review: mongoose.model('Review', reviewSchema, 'description_reviews'),
   Feature: mongoose.model('Feature', featureSchema, 'description_features'),
   DeliveryMap: mongoose.model('DeliveryMap', deliveryMapSchema, 'description_delivery_maps'),
-  AboutSection: mongoose.model('AboutSection', aboutSectionSchema, 'description_about')
+  AboutSection: mongoose.model('AboutSection', aboutSectionSchema, 'description_about'),
+  PaymentIcons: mongoose.model('PaymentIcons', paymentIconsSchema, 'description_payment_icons')
 };
