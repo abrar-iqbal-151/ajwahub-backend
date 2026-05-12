@@ -1,6 +1,6 @@
 const express = require('express');
 const jwt = require('jsonwebtoken');
-const { Hero, Product, Review, Feature, DeliveryMap } = require('../models/Content');
+const { Hero, Product, Review, Feature, DeliveryMap, AboutSection } = require('../models/Content');
 
 const router = express.Router();
 
@@ -230,6 +230,39 @@ router.put('/content/delivery-map', verifyAdmin, async (req, res) => {
     );
     res.json({ message: 'Delivery map updated', deliveryMap });
   } catch { res.status(500).json({ message: 'Error updating delivery map' }); }
+});
+
+// ── ABOUT SECTION ──
+router.get('/content/about', async (req, res) => {
+  try {
+    let about = await AboutSection.findOne({ key: 'about1' });
+    if (!about) {
+      about = await AboutSection.create({
+        key: 'about1',
+        title: 'How Our Dates Are Grown',
+        paragraphs: [
+          'Our premium dates are cultivated by skilled farmers who have perfected the art of date farming over generations. The journey begins with carefully selected date palm trees planted in nutrient-rich soil.',
+          'Farmers meticulously water the palms using traditional irrigation methods, ensuring each tree receives the perfect amount of moisture. The dates are hand-pollinated during the flowering season to guarantee the best quality fruit.',
+          'As the dates ripen under the warm sun, they develop their natural sweetness and rich flavor. Each date is carefully harvested by hand at peak ripeness, then sorted and packaged to preserve its freshness and nutritional value.',
+          "From farm to your table, we ensure every date meets our strict quality standards, bringing you the authentic taste of nature's finest superfood."
+        ],
+        images: ['/dates-farming.jpg', '/Product 1.png', '/Product 2.png', '/Product 3.png']
+      });
+    }
+    res.json({ about });
+  } catch { res.status(500).json({ message: 'Error fetching about section' }); }
+});
+
+router.put('/content/about', verifyAdmin, async (req, res) => {
+  try {
+    const { title, paragraphs, images } = req.body;
+    const about = await AboutSection.findOneAndUpdate(
+      { key: 'about1' },
+      { title, paragraphs, images },
+      { new: true, upsert: true }
+    );
+    res.json({ message: 'About section updated', about });
+  } catch { res.status(500).json({ message: 'Error updating about section' }); }
 });
 
 module.exports = router;
