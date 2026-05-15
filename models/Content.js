@@ -62,6 +62,19 @@ const paymentIconsSchema = new mongoose.Schema({
   icons: [{ type: String }]
 }, { timestamps: true });
 
+const aiSectionSchema = new mongoose.Schema({
+  key: { type: String, required: true, unique: true, default: 'aiSection1' },
+  badge: { type: String, default: 'AI POWERED WELLNESS' },
+  title: { type: String, default: 'Personalized Health with AjwaHub Intelligence' },
+  description: { type: String, default: 'Step into the future of nutrition. Our proprietary AI analyzes your wellness goals to recommend the perfect date varieties and nutritional plans tailored specifically for your lifestyle.' },
+  video: { type: String, default: '/ai-preview.mp4' },
+  features: [{
+    icon: { type: String, default: '🤖' },
+    title: { type: String, required: true },
+    text: { type: String, required: true }
+  }]
+}, { timestamps: true });
+
 module.exports = {
   Hero: mongoose.model('Hero', heroSchema, 'description_heroes'),
   Product: mongoose.model('Product', productSchema, 'description_products'),
@@ -69,5 +82,7 @@ module.exports = {
   Feature: mongoose.model('Feature', featureSchema, 'description_features'),
   DeliveryMap: mongoose.model('DeliveryMap', deliveryMapSchema, 'description_delivery_maps'),
   AboutSection: mongoose.model('AboutSection', aboutSectionSchema, 'description_about'),
-  PaymentIcons: mongoose.model('PaymentIcons', paymentIconsSchema, 'description_payment_icons')
+  PaymentIcons: mongoose.model('PaymentIcons', paymentIconsSchema, 'description_payment_icons'),
+  AiSection: mongoose.model('AiSection', aiSectionSchema, 'description_ai_sections')
 };
+

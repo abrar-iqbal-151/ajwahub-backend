@@ -1,6 +1,7 @@
 const express = require('express');
 const jwt = require('jsonwebtoken');
-const { Hero, Product, Review, Feature, DeliveryMap, AboutSection, PaymentIcons } = require('../models/Content');
+const { Hero, Product, Review, Feature, DeliveryMap, AboutSection, PaymentIcons, AiSection } = require('../models/Content');
+
 
 const router = express.Router();
 
@@ -88,10 +89,26 @@ router.post('/content/initialize', verifyAdmin, async (req, res) => {
       { name: 'Sara Ahmed', text: 'Perfect taste and freshness. Will order again!', rating: 4.8 }
     ];
 
+    const aiSection = {
+      key: 'aiSection1',
+      badge: 'AI POWERED WELLNESS',
+      title: 'Personalized Health with AjwaHub Intelligence',
+      description: 'Step into the future of nutrition. Our proprietary AI analyzes your wellness goals to recommend the perfect date varieties and nutritional plans tailored specifically for your lifestyle.',
+      video: '/ai-preview.mp4',
+      features: [
+        { icon: '🤖', title: 'Smart Recommendations', text: 'AI-driven product selection based on your health profile.' },
+        { icon: '🧠', title: 'Nutritional Insights', text: 'Deep data on mineral content and health benefits.' },
+        { icon: '⚡', title: 'Instant Assistance', text: '24/7 support for all your health and product queries.' },
+        { icon: '📈', title: 'Wellness Tracking', text: 'Monitor your journey towards a healthier life.' }
+      ]
+    };
+
     for (const h of heroes) await Hero.findOneAndUpdate({ key: h.key }, h, { upsert: true });
     await Feature.findOneAndUpdate({ key: feature.key }, feature, { upsert: true });
+    await AiSection.findOneAndUpdate({ key: aiSection.key }, aiSection, { upsert: true });
     await Product.insertMany(products);
     await Review.insertMany(reviews);
+
 
     res.json({ message: 'initialized' });
   } catch { res.status(500).json({ message: 'Error initializing data' }); }
@@ -306,16 +323,50 @@ router.get('/content/payment-icons', async (req, res) => {
   } catch { res.status(500).json({ message: 'Error fetching payment icons' }); }
 });
 
-router.put('/content/payment-icons', verifyAdmin, async (req, res) => {
+// ── AI SECTION ──
+router.get('/content/ai-section', async (req, res) => {
   try {
-    const { icons } = req.body;
-    const payment = await PaymentIcons.findOneAndUpdate(
-      { key: 'payment1' },
-      { icons },
+    let ai = await AiSection.findOne({ key: 'aiSection1' });
+    if (!ai) {
+      ai = await AiSection.create({
+        key: 'aiSection1',
+        badge: 'AI POWERED WELLNESS',
+        title: 'Personalized Health with AjwaHub Intelligence',
+        description: 'Step into the future of nutrition. Our proprietary AI analyzes your wellness goals to recommend the perfect date varieties and nutritional plans tailored specifically for your lifestyle.',
+        video: '/ai-preview.mp4',
+        features: [
+          { icon: '🤖', title: 'Smart Recommendations', text: 'AI-driven product selection based on your health profile.' },
+          { icon: '🧠', title: 'Nutritional Insights', text: 'Deep data on mineral content and health benefits.' },
+          { icon: '⚡', title: 'Instant Assistance', text: '24/7 support for all your health and product queries.' },
+          { icon: '📈', title: 'Wellness Tracking', text: 'Monitor your journey towards a healthier life.' }
+        ]
+      });
+    }
+    res.json({ aiSection: ai });
+  } catch { res.status(500).json({ message: 'Error fetching AI section' }); }
+});
+
+router.put('/content/ai-section', verifyAdmin, async (req, res) => {
+  try {
+    const { badge, title, description, video, features } = req.body;
+    const ai = await AiSection.findOneAndUpdate(
+      { key: 'aiSection1' },
+      { badge, title, description, video, features },
       { new: true, upsert: true }
     );
-    res.json({ message: 'Payment icons updated', icons: payment.icons });
-  } catch { res.status(500).json({ message: 'Error updating payment icons' }); }
+    res.json({ message: 'AI section updated', aiSection: ai });
+  } catch { res.status(500).json({ message: 'Error updating AI section' }); }
 });
+
+router.put('/content/payment-icons', verifyAdmin, async (req, res) => {
+  const { icons } = req.body;
+  const payment = await PaymentIcons.findOneAndUpdate(
+    { key: 'payment1' },
+    { icons },
+    { new: true, upsert: true }
+  );
+  res.json({ message: 'Payment icons updated', icons: payment.icons });
+});
+
 
 module.exports = router;
