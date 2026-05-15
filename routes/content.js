@@ -127,7 +127,7 @@ router.get('/content/products', async (req, res) => {
 
 router.post('/content/product', verifyAdmin, async (req, res) => {
   try {
-    const { name, arabicName, price, discount, stock, description, rating, image, weight, category, storageNote, weights } = req.body;
+    const { name, arabicName, price, discount, stock, description, rating, image, detailImage, weight, category, storageNote, weights } = req.body;
     if (!name || !price) return res.status(400).json({ message: 'Name and price required' });
     const last = await Product.findOne().sort({ id: -1 });
     const newId = last ? last.id + 1 : 1;
@@ -141,6 +141,7 @@ router.post('/content/product', verifyAdmin, async (req, res) => {
       description: description || '', 
       rating: rating || 4.5, 
       image: image || '', 
+      detailImage: detailImage || '', 
       weight: weight || '1kg', 
       category: category || 'dates',
       storageNote: storageNote || '',
@@ -152,10 +153,10 @@ router.post('/content/product', verifyAdmin, async (req, res) => {
 
 router.put('/content/product/:id', verifyAdmin, async (req, res) => {
   try {
-    const { name, arabicName, price, discount, stock, description, rating, image, category, storageNote, weights } = req.body;
+    const { name, arabicName, price, discount, stock, description, rating, image, detailImage, category, storageNote, weights } = req.body;
     const product = await Product.findOneAndUpdate(
       { id: req.params.id },
-      { name, arabicName, price, discount, stock, description, rating, image, category, storageNote, weights },
+      { name, arabicName, price, discount, stock, description, rating, image, detailImage, category, storageNote, weights },
       { new: true }
     );
     if (!product) return res.status(404).json({ message: 'Product not found' });

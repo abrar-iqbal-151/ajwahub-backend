@@ -8,6 +8,7 @@ const shopProductSchema = new mongoose.Schema({
   rating: { type: Number, default: 4.5 },
   stock: { type: Boolean, default: true },
   image: { type: String, default: '' },
+  detailImage: { type: String, default: '' },
   description: { type: String, default: '' },
   category: { type: String, default: 'dates' },
   discount: { type: String, default: '' },
