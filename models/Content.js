@@ -10,6 +10,7 @@ const heroSchema = new mongoose.Schema({
 const productSchema = new mongoose.Schema({
   id: { type: Number, required: true, unique: true },
   name: { type: String, required: true },
+  arabicName: { type: String, default: '' },
   price: { type: Number, required: true },
   weight: { type: String, default: '1kg' },
   rating: { type: Number, default: 4.5 },
@@ -17,7 +18,12 @@ const productSchema = new mongoose.Schema({
   image: { type: String, default: '' },
   description: { type: String, default: '' },
   discount: { type: String, default: '50% OFF' },
-  category: { type: String, default: 'dates' }
+  category: { type: String, default: 'dates' },
+  storageNote: { type: String, default: 'To maintain freshness and softness, store dates in the refrigerator after receiving the parcel....' },
+  weights: [{
+    label: { type: String },
+    savings: { type: String }
+  }]
 }, { timestamps: true });
 
 const reviewSchema = new mongoose.Schema({

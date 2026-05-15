@@ -43,26 +43,42 @@ router.post('/content/initialize', verifyAdmin, async (req, res) => {
       ]
     };
     const products = [
-      { id: 1, name: 'Ajwa Dates', price: 1200, weight: '1kg', rating: 4.8, stock: true, image: '/Product 1.png', description: '🌟 Sacred Ajwa dates from Madinah - naturally sweet, nutrient-rich, perfect for daily wellness.', discount: '50% OFF' },
-      { id: 2, name: 'Medjool Dates', price: 1800, weight: '1kg', rating: 4.7, stock: true, image: '/Product 2.png', description: '👑 King of dates - large, soft, and luxuriously sweet Medjool variety.', discount: '50% OFF' },
-      { id: 3, name: 'Deglet Dates', price: 1000, weight: '1kg', rating: 4.5, stock: true, image: '/Product 3.png', description: '✨ Golden translucent Deglet Noor - delicate sweetness with chewy texture.', discount: '50% OFF' },
-      { id: 4, name: 'Zahidi Dates', price: 900, weight: '1kg', rating: 4.4, stock: true, image: '/Product 4.png', description: '🥇 Premium golden Zahidi dates - firm texture with rich, caramel-like flavor.', discount: '50% OFF' },
-      { id: 5, name: 'Almonds', price: 1500, weight: '1kg', rating: 4.6, stock: true, image: '/Product 5.png', description: '🌰 Crunchy premium almonds - heart-healthy protein powerhouse for daily snacking.', discount: '50% OFF' },
-      { id: 6, name: 'Cashews', price: 1800, weight: '1kg', rating: 4.7, stock: true, image: '/Product 6.png', description: '🥜 Buttery smooth cashews - creamy texture with rich, satisfying taste.', discount: '50% OFF' },
-      { id: 7, name: 'Walnuts', price: 2000, weight: '1kg', rating: 4.5, stock: true, image: '/Product 7.png', description: '🧠 Brain-shaped walnuts - omega-3 rich halves for mental wellness.', discount: '50% OFF' },
-      { id: 8, name: 'Pistachios', price: 2500, weight: '1kg', rating: 4.8, stock: true, image: '/Product 8.png', description: '💚 Roasted green pistachios - perfectly salted, fun-to-crack premium nuts.', discount: '50% OFF' },
-      { id: 9, name: 'Raisins', price: 600, weight: '1kg', rating: 4.2, stock: true, image: '/Product 9.png', description: '🍇 Sun-dried golden raisins - naturally sweet, chewy energy boosters.', discount: '50% OFF' },
-      { id: 10, name: 'Dried Figs', price: 1200, weight: '1kg', rating: 4.4, stock: true, image: '/Product 10.png', description: '🌸 Soft dried figs - honey-sweet with delicate floral notes and seeds.', discount: '50% OFF' },
-      { id: 11, name: 'Hazelnuts', price: 1900, weight: '1kg', rating: 4.5, stock: true, image: '/Product 11.png', description: '🌰 Crunchy hazelnut kernels - rich, buttery flavor perfect for snacking.', discount: '50% OFF' },
-      { id: 12, name: 'Brazil Nuts', price: 2200, weight: '1kg', rating: 4.3, stock: true, image: '/Product 12.png', description: '🌳 Large Brazil nuts - selenium-rich, creamy texture with earthy taste.', discount: '50% OFF' },
-      { id: 13, name: 'Pecans', price: 2800, weight: '1kg', rating: 4.6, stock: true, image: '/Product 13.png', description: '🍂 Buttery pecan halves - sweet, rich flavor with smooth, tender texture.', discount: '50% OFF' },
-      { id: 14, name: 'Pine Nuts', price: 3500, weight: '1kg', rating: 4.7, stock: true, image: '/Product 14.png', description: '🌲 Premium pine nuts - delicate, buttery taste perfect for gourmet cooking.', discount: '50% OFF' },
-      { id: 15, name: 'Macadamias', price: 3200, weight: '1kg', rating: 4.8, stock: true, image: '/Product 15.png', description: '🏝️ Creamy macadamia nuts - tropical luxury with rich, buttery crunch.', discount: '50% OFF' },
-      { id: 16, name: 'Dried Apricots', price: 800, weight: '1kg', rating: 4.3, stock: true, image: '/Product 16.png', description: '🍑 Sweet dried apricots - tangy-sweet flavor with soft, chewy texture.', discount: '50% OFF' },
-      { id: 17, name: 'Dates Mix', price: 1400, weight: '1kg', rating: 4.6, stock: true, image: '/Product 17.png', description: '🎯 Premium dates variety pack - multiple flavors in one convenient package.', discount: '50% OFF' },
-      { id: 18, name: 'Nuts Mix', price: 2200, weight: '1kg', rating: 4.7, stock: true, image: '/Product 18.png', description: '🥜 Gourmet mixed nuts - perfect blend of premium varieties for every taste.', discount: '50% OFF' },
-      { id: 19, name: 'Trail Mix', price: 1600, weight: '1kg', rating: 4.4, stock: true, image: '/Product 19.png', description: '🥾 Healthy trail mix - energizing blend of nuts, fruits, and natural goodness.', discount: '50% OFF' },
-      { id: 20, name: 'Gift Box', price: 3000, weight: '1kg', rating: 4.9, stock: true, image: '/Product 20.png', description: '🎁 Luxury gift box - premium assortment beautifully packaged for special occasions.', discount: '50% OFF' }
+      { id: 1, name: 'Brown Dates', arabicName: 'عجوة بني', price: 1200, weight: '1kg', rating: 4.8, stock: true, image: '/Product 1.png', description: '🌟 Premium Brown dates - naturally sweet, nutrient-rich, perfect for daily wellness.', discount: '50% OFF', storageNote: 'To maintain freshness and softness, store dates in the refrigerator after receiving the parcel....', weights: [
+        { label: '1kg Special Box', savings: '' },
+        { label: '500g Mini Box', savings: '' },
+        { label: '2kg Briefcase Box', savings: '(Save Rs 500)' },
+        { label: '3kg Saudi Box', savings: '(Save Rs 700)' },
+        { label: '5kg Family Carton', savings: '(Save Rs 1500)' }
+      ]},
+      { id: 2, name: 'Ajwa Dates', arabicName: 'عجوة', price: 1800, weight: '1kg', rating: 4.7, stock: true, image: '/Product 2.png', description: '👑 Sacred Ajwa dates from Madinah - naturally sweet and luxuriously soft.', discount: '50% OFF', storageNote: 'To maintain freshness and softness, store dates in the refrigerator after receiving the parcel....', weights: [
+        { label: '1kg Special Box', savings: '' },
+        { label: '500g Mini Box', savings: '' },
+        { label: '2kg Briefcase Box', savings: '(Save Rs 500)' },
+        { label: '3kg Saudi Box', savings: '(Save Rs 700)' },
+        { label: '5kg Family Carton', savings: '(Save Rs 1500)' }
+      ]},
+      { id: 3, name: 'Deglet Dates', arabicName: 'دجلة', price: 1000, weight: '1kg', rating: 4.5, stock: true, image: '/Product 3.png', description: '✨ Golden translucent Deglet Noor - delicate sweetness with chewy texture.', discount: '50% OFF', storageNote: 'To maintain freshness and softness, store dates in the refrigerator after receiving the parcel....', weights: [
+        { label: '1kg Special Box', savings: '' },
+        { label: '500g Mini Box', savings: '' },
+        { label: '2kg Briefcase Box', savings: '(Save Rs 500)' },
+        { label: '3kg Saudi Box', savings: '(Save Rs 700)' },
+        { label: '5kg Family Carton', savings: '(Save Rs 1500)' }
+      ]},
+      { id: 4, name: 'Zahidi Dates', arabicName: 'زاهدي', price: 900, weight: '1kg', rating: 4.4, stock: true, image: '/Product 4.png', description: '🥇 Premium golden Zahidi dates - firm texture with rich, caramel-like flavor.', discount: '50% OFF', storageNote: 'To maintain freshness and softness, store dates in the refrigerator after receiving the parcel....', weights: [
+        { label: '1kg Special Box', savings: '' },
+        { label: '500g Mini Box', savings: '' },
+        { label: '2kg Briefcase Box', savings: '(Save Rs 500)' },
+        { label: '3kg Saudi Box', savings: '(Save Rs 700)' },
+        { label: '5kg Family Carton', savings: '(Save Rs 1500)' }
+      ]},
+      { id: 5, name: 'Almonds', arabicName: 'لوز', price: 1500, weight: '1kg', rating: 4.6, stock: true, image: '/Product 5.png', description: '🌰 Crunchy premium almonds - heart-healthy protein powerhouse.', discount: '50% OFF', storageNote: 'Store in a cool, dry place to maintain crunchiness.', weights: [
+        { label: '1kg Special Box', savings: '' },
+        { label: '500g Mini Box', savings: '' }
+      ]},
+      { id: 6, name: 'Cashews', arabicName: 'كاجو', price: 1800, weight: '1kg', rating: 4.7, stock: true, image: '/Product 6.png', description: '🥜 Buttery smooth cashews - creamy texture with rich taste.', discount: '50% OFF', storageNote: 'Store in a cool, dry place.', weights: [
+        { label: '1kg Special Box', savings: '' },
+        { label: '500g Mini Box', savings: '' }
+      ]}
     ];
     const reviews = [
       { name: 'Ahmed Khan', text: 'Best quality dates! Fresh and delivered on time.', rating: 5 },
@@ -110,21 +126,35 @@ router.get('/content/products', async (req, res) => {
 
 router.post('/content/product', verifyAdmin, async (req, res) => {
   try {
-    const { name, price, discount, stock, description, rating, image, weight, category } = req.body;
+    const { name, arabicName, price, discount, stock, description, rating, image, weight, category, storageNote, weights } = req.body;
     if (!name || !price) return res.status(400).json({ message: 'Name and price required' });
     const last = await Product.findOne().sort({ id: -1 });
     const newId = last ? last.id + 1 : 1;
-    const product = await Product.create({ id: newId, name, price, discount: discount || '', stock: stock !== undefined ? stock : true, description: description || '', rating: rating || 4.5, image: image || '', weight: weight || '1kg', category: category || 'dates' });
+    const product = await Product.create({ 
+      id: newId, 
+      name, 
+      arabicName: arabicName || '',
+      price, 
+      discount: discount || '', 
+      stock: stock !== undefined ? stock : true, 
+      description: description || '', 
+      rating: rating || 4.5, 
+      image: image || '', 
+      weight: weight || '1kg', 
+      category: category || 'dates',
+      storageNote: storageNote || '',
+      weights: weights || []
+    });
     res.status(201).json({ message: 'Product added', product });
   } catch { res.status(500).json({ message: 'Error adding product' }); }
 });
 
 router.put('/content/product/:id', verifyAdmin, async (req, res) => {
   try {
-    const { name, price, discount, stock, description, rating, image, category } = req.body;
+    const { name, arabicName, price, discount, stock, description, rating, image, category, storageNote, weights } = req.body;
     const product = await Product.findOneAndUpdate(
       { id: req.params.id },
-      { name, price, discount, stock, description, rating, image, category },
+      { name, arabicName, price, discount, stock, description, rating, image, category, storageNote, weights },
       { new: true }
     );
     if (!product) return res.status(404).json({ message: 'Product not found' });
