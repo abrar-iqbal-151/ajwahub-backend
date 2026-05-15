@@ -40,7 +40,8 @@ router.post('/content/initialize', verifyAdmin, async (req, res) => {
         { icon: '📦', text: 'Premium Packaging' },
         { icon: '🚚', text: 'Fast Delivery Across Pakistan' },
         { icon: '⭐', text: 'Trusted by 50,000+ Customers' }
-      ]
+      ],
+      images: ['/Product 1.png', '/Product 2.png', '/Product 3.png', '/Product 4.png']
     };
     const products = [
       { id: 1, name: 'Brown Dates', arabicName: 'عجوة بني', price: 1200, weight: '1kg', rating: 4.8, stock: true, image: '/Product 1.png', description: '🌟 Premium Brown dates - naturally sweet, nutrient-rich, perfect for daily wellness.', discount: '50% OFF', storageNote: 'To maintain freshness and softness, store dates in the refrigerator after receiving the parcel....', weights: [
