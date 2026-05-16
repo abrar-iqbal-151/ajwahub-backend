@@ -1,6 +1,7 @@
 const express = require('express');
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 const AiHistory = require('../models/AiHistory');
+const ChatSession = require('../models/ChatSession');
 const router = express.Router();
 
 const SYSTEM_PROMPT = `You are AjwaHub AI — a powerful AI assistant like Google Search + ChatGPT combined. You have access to all knowledge.
@@ -32,7 +33,8 @@ STRICT RULES:
 
 const getModel = (apiKey) => {
   const genAI = new GoogleGenerativeAI(apiKey);
-  return genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
+  // Use full model path as required by this API key
+  return genAI.getGenerativeModel({ model: 'models/gemini-2.5-flash' });
 };
 
 // Chat route
@@ -105,7 +107,6 @@ router.post('/ai/image', async (req, res) => {
   }
 });
 
-// Get history
 router.get('/ai/history/:userId', async (req, res) => {
   try {
     const history = await AiHistory.find({ userId: req.params.userId }).sort({ createdAt: -1 }).limit(50);
@@ -115,7 +116,6 @@ router.get('/ai/history/:userId', async (req, res) => {
   }
 });
 
-// Delete single
 router.delete('/ai/history/:id', async (req, res) => {
   try {
     await AiHistory.findByIdAndDelete(req.params.id);
@@ -125,13 +125,64 @@ router.delete('/ai/history/:id', async (req, res) => {
   }
 });
 
-// Clear all
 router.delete('/ai/history/clear/:userId', async (req, res) => {
   try {
     await AiHistory.deleteMany({ userId: req.params.userId });
     res.json({ message: 'Cleared' });
   } catch {
     res.status(500).json({ message: 'Error clearing' });
+  }
+});
+
+// ── CHAT SESSIONS (Full conversation save) ──
+
+// Save a full chat session (called when user clicks "New Chat")
+router.post('/ai/session', async (req, res) => {
+  try {
+    const { userId, userName, messages } = req.body;
+    if (!userId || !messages || messages.length < 2) {
+      return res.status(400).json({ message: 'Invalid session data' });
+    }
+    // Auto-generate title from first user message
+    const firstUserMsg = messages.find(m => m.role === 'user');
+    const title = firstUserMsg?.text?.slice(0, 60) || 'Chat Session';
+    const session = await ChatSession.create({ userId, userName: userName || '', messages, title });
+    res.json({ session });
+  } catch (err) {
+    console.error('Save session error:', err.message);
+    res.status(500).json({ message: 'Error saving session' });
+  }
+});
+
+// Get all sessions for a user
+router.get('/ai/sessions/:userId', async (req, res) => {
+  try {
+    const sessions = await ChatSession.find({ userId: req.params.userId })
+      .sort({ createdAt: -1 })
+      .limit(30);
+    res.json(sessions);
+  } catch {
+    res.status(500).json({ message: 'Error fetching sessions' });
+  }
+});
+
+// Delete a single session
+router.delete('/ai/session/:id', async (req, res) => {
+  try {
+    await ChatSession.findByIdAndDelete(req.params.id);
+    res.json({ message: 'Session deleted' });
+  } catch {
+    res.status(500).json({ message: 'Error deleting session' });
+  }
+});
+
+// Clear ALL sessions for a user
+router.delete('/ai/sessions/clear/:userId', async (req, res) => {
+  try {
+    await ChatSession.deleteMany({ userId: req.params.userId });
+    res.json({ message: 'All sessions cleared' });
+  } catch {
+    res.status(500).json({ message: 'Error clearing sessions' });
   }
 });
 
