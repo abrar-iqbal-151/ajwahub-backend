@@ -36,5 +36,34 @@ router.delete('/gymai/videos/:id', verifyAdmin, async (req, res) => {
     res.json({ message: 'Deleted' });
   } catch (err) { res.status(500).json({ message: err.message }); }
 });
+// --- HISTORY ROUTES --- //
+
+const GymaiHistory = require('../models/GymaiHistory');
+
+// Save history
+router.post('/gymai/history', async (req, res) => {
+  try {
+    const { userId, type, promptData, result } = req.body;
+    if (!userId || !type || !result) return res.status(400).json({ message: 'Missing fields' });
+    const history = await GymaiHistory.create({ userId, type, promptData, result });
+    res.status(201).json({ message: 'Saved', history });
+  } catch (err) { res.status(500).json({ message: err.message }); }
+});
+
+// Get user history
+router.get('/gymai/history/:userId', async (req, res) => {
+  try {
+    const history = await GymaiHistory.find({ userId: req.params.userId }).sort({ createdAt: -1 });
+    res.json({ history });
+  } catch (err) { res.status(500).json({ message: err.message }); }
+});
+
+// Delete history
+router.delete('/gymai/history/:id', async (req, res) => {
+  try {
+    await GymaiHistory.findByIdAndDelete(req.params.id);
+    res.json({ message: 'Deleted' });
+  } catch (err) { res.status(500).json({ message: err.message }); }
+});
 
 module.exports = router;
