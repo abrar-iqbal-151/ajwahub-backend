@@ -44,6 +44,7 @@ app.use('/api', require('./routes/ai'));
 app.use('/api', require('./routes/orders'));
 app.use('/api', require('./routes/videos'));
 app.use('/api', require('./routes/premiumProducts'));
+app.use('/api', require('./routes/ratings'));
 app.use('/api/stripe', require('./routes/stripe'));
 
 app.get('/', (req, res) => {
