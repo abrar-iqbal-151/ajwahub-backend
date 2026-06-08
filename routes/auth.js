@@ -18,8 +18,16 @@ const transporter = nodemailer.createTransport({
 const otpStore = {};
 
 const sendOTP = async (email, otp) => {
+  if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
+    console.log(`\n\n========================================`);
+    console.log(`Mock Email sent to: ${email}`);
+    console.log(`Your Verification Code is: ${otp}`);
+    console.log(`========================================\n\n`);
+    return; // Resolve immediately if no email credentials
+  }
+
   await transporter.sendMail({
-    from: `"${process.env.EMAIL_NAME}" <${process.env.EMAIL_USER}>`,
+    from: `"${process.env.EMAIL_NAME || 'AjwaHub'}" <${process.env.EMAIL_USER}>`,
     to: email,
     subject: 'AjwaHub - Password Reset Code',
     html: `
