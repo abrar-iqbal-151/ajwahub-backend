@@ -34,7 +34,7 @@ STRICT RULES:
 const getModel = (apiKey) => {
   const genAI = new GoogleGenerativeAI(apiKey);
   // Use full model path as required by this API key
-  return genAI.getGenerativeModel({ model: 'models/gemini-2.5-flash' });
+  return genAI.getGenerativeModel({ model: 'models/gemini-flash-latest' });
 };
 
 // Chat route
