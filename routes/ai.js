@@ -61,6 +61,39 @@ router.post('/ai/chat', async (req, res) => {
   }
 });
 
+// Dedicated GymAI Diet/Recipe Generation Route
+router.post('/ai/gymai/generate', async (req, res) => {
+  try {
+    const { prompt } = req.body;
+    if (!prompt) return res.status(400).json({ message: 'Prompt required' });
+
+    const apiKey = process.env.GEMINI_API_KEY;
+    if (!apiKey) return res.status(500).json({ message: 'API key not configured' });
+
+    const model = getModel(apiKey);
+    
+    const gymAiSystemPrompt = `You are GymAI, an expert nutritionist and fitness coach representing AjwaHub. Your job is to create detailed, healthy diet plans and recipes based strictly on the user's bodily stats. 
+Whenever possible or relevant, creatively incorporate Ajwa dates or premium dry fruits into the meals. 
+Write the entire response in clear Roman Urdu (e.g. "Aapka wazan..."). 
+IMPORTANT: DO NOT use any markdown symbols (no **, no ##, no *). Use simple bullet points (-) and spacing.
+Be extremely practical, safe, and professional about health.`;
+
+    const fullHistory = [
+      { role: 'user', parts: [{ text: gymAiSystemPrompt }] },
+      { role: 'model', parts: [{ text: 'Understood. I will act as GymAI and provide safe, practical diet plans and recipes in Roman Urdu without any markdown symbols.' }] },
+    ];
+
+    const chat = model.startChat({ history: fullHistory });
+    const result = await chat.sendMessage(prompt);
+    const response = result.response.text();
+
+    res.json({ response });
+  } catch (err) {
+    console.error('GymAI generation error:', err.message);
+    res.status(500).json({ message: 'GymAI error', error: err.message });
+  }
+});
+
 // Image route
 router.post('/ai/image', async (req, res) => {
   try {
