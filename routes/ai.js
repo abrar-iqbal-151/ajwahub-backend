@@ -99,6 +99,32 @@ router.post('/ai/image', async (req, res) => {
   }
 });
 
+// Compare Images route
+router.post('/ai/compare-images', async (req, res) => {
+  try {
+    const { image1Base64, mimeType1, image2Base64, mimeType2, question } = req.body;
+    if (!image1Base64 || !image2Base64) return res.status(400).json({ message: 'Both images are required' });
+
+    const apiKey = process.env.GEMINI_API_KEY;
+    const model = getModel(apiKey);
+
+    const prompt = question || "Mera yeh sawal hai: In dono Ajwa khajooron mein farq batao. Kaun si achi hai aur kaun si kharab? Kya farq hai dono ki quality aur appearance mein? Roman Urdu mein clearly jawab do.";
+
+    const result = await model.generateContent([
+      { inlineData: { data: image1Base64, mimeType: mimeType1 || 'image/jpeg' } },
+      { inlineData: { data: image2Base64, mimeType: mimeType2 || 'image/jpeg' } },
+      prompt
+    ]);
+
+    const response = result.response.text();
+    res.json({ response });
+
+  } catch (err) {
+    console.error('Compare AI error:', err.message);
+    res.status(500).json({ message: 'Image comparison failed', error: err.message });
+  }
+});
+
 router.get('/ai/history/:userId', async (req, res) => {
   try {
     const history = await AiHistory.find({ userId: req.params.userId }).sort({ createdAt: -1 }).limit(50);
