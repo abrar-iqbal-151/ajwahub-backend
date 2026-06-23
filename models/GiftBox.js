@@ -8,6 +8,10 @@ const giftBoxSchema = new mongoose.Schema({
   itemType: { type: String, default: 'dates & dry fruits' },
   price: { type: Number, required: true },
   tag: { type: String, default: 'New' },
+  stock: { type: Boolean, default: true },
+  totalStockKg: { type: Number, default: 0 },
+  thresholdKg: { type: Number, default: 0 },
+  autoStockManagement: { type: Boolean, default: false },
 }, { timestamps: true });
 
 module.exports = mongoose.model('GiftBox', giftBoxSchema, 'gift_boxes');

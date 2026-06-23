@@ -21,10 +21,23 @@ router.post('/orders', async (req, res) => {
     // Auto Stock Management Logic
     if (order.items && Array.isArray(order.items)) {
       const ShopProduct = require('../models/ShopProduct');
+      const PremiumProduct = require('../models/PremiumProduct');
+      const GiftBox = require('../models/GiftBox');
+      
       for (const item of order.items) {
-        // Find product by name or id
-        // assuming item has 'name' or 'id'
-        const product = await ShopProduct.findOne({ name: item.name });
+        // Find product by name in all collections
+        let product = await ShopProduct.findOne({ name: item.name });
+        let collectionType = 'shop';
+        
+        if (!product) {
+          product = await PremiumProduct.findOne({ name: item.name });
+          collectionType = 'premium';
+        }
+        if (!product) {
+          product = await GiftBox.findOne({ name: item.name });
+          collectionType = 'giftbox';
+        }
+
         if (product && product.autoStockManagement) {
           // Calculate kg to deduct
           let kgToDeduct = 0;
