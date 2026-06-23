@@ -56,10 +56,10 @@ router.post('/shop-products/initialize', verifyAdmin, async (req, res) => {
 // Add new product
 router.post('/shop-products', verifyAdmin, async (req, res) => {
   try {
-    const { name, price, weight, rating, stock, image, detailImage, description, category, storageNote, weights, arabicName } = req.body;
+    const { name, price, weight, rating, stock, totalStockKg, thresholdKg, autoStockManagement, image, detailImage, description, category, storageNote, weights, arabicName } = req.body;
     const lastProduct = await ShopProduct.findOne().sort({ id: -1 });
     const newId = lastProduct ? lastProduct.id + 1 : 1;
-    const product = await ShopProduct.create({ id: newId, name, price, weight: weight || '1kg', rating: rating || 4.5, stock: stock !== undefined ? stock : true, image: image || '', detailImage: detailImage || '', description: description || '', category: category || 'dates', storageNote, weights, arabicName });
+    const product = await ShopProduct.create({ id: newId, name, price, weight: weight || '1kg', rating: rating || 4.5, stock: stock !== undefined ? stock : true, totalStockKg: totalStockKg || 0, thresholdKg: thresholdKg || 0, autoStockManagement: autoStockManagement || false, image: image || '', detailImage: detailImage || '', description: description || '', category: category || 'dates', storageNote, weights, arabicName });
     res.status(201).json({ message: 'Product added', product });
   } catch (err) { res.status(500).json({ message: err.message }); }
 });
@@ -67,12 +67,12 @@ router.post('/shop-products', verifyAdmin, async (req, res) => {
 // Update single product
 router.put('/shop-products/:id', verifyAdmin, async (req, res) => {
   try {
-    const { name, price, weight, rating, stock, image, detailImage, description, category, discount, storageNote, weights, arabicName } = req.body;
+    const { name, price, weight, rating, stock, totalStockKg, thresholdKg, autoStockManagement, image, detailImage, description, category, discount, storageNote, weights, arabicName } = req.body;
     const isMongoId = /^[a-f\d]{24}$/i.test(req.params.id);
     const query = isMongoId ? { _id: req.params.id } : { id: Number(req.params.id) };
     const product = await ShopProduct.findOneAndUpdate(
       query,
-      { name, price, weight, rating, stock, image, detailImage, description, category, discount, storageNote, weights, arabicName },
+      { name, price, weight, rating, stock, totalStockKg, thresholdKg, autoStockManagement, image, detailImage, description, category, discount, storageNote, weights, arabicName },
       { new: true }
     );
     if (!product) return res.status(404).json({ message: 'Product not found' });
