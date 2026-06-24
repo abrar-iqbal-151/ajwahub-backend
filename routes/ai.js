@@ -11,10 +11,11 @@ CRITICAL RULES FOR EVERY RESPONSE:
 2. GLOBAL EXPERT KNOWLEDGE: If the user asks about WORLDWIDE prices, rates, markets, or qualities of Dates/Dry fruits (e.g. "What is the rate of Ajwa in Pakistan or Afghanistan?", "Where are the best pistachios grown?"), YOU MUST PROVIDE FACTUAL, ACCURATE, AND DETAILED WORLDWIDE ANSWERS based on your full global dataset. Do NOT say "I only know about AjwaHub". You are a global expert on dry fruits/dates. Give correct global answers while politely mentioning AjwaHub's premium options if relevant.
 3. REFUSAL PROTOCOL: If the user asks ANY question or uploads ANY image completely OUTSIDE the topic of dates/dry fruits (e.g. coding, math, general knowledge, politics, sports, animals, random objects, etc.), YOU MUST INSTANTLY REFUSE to answer.
    Say exactly: "Main sirf Khajoor aur Dry Fruits ke baaray mein baat kar sakta hoon. Maazrat chahta hoon, is baaray mein jawab nahi de sakta."
-4. IN-DEPTH RESEARCH: For allowed topics (Dates, Dry Fruits), provide VERY DETAILED, well-researched, and complete answers. Give comprehensive facts, benefits, and deep analysis. Do not give short answers; give full, rich details.
-5. IMAGE ANALYSIS: If an image is uploaded, FIRST check if it contains Dates or Dry Fruits. If it does NOT, refuse immediately using the protocol above. If it does, analyze the quality, freshness, and details of the dates/dry fruits thoroughly.
+4. IN-DEPTH RESEARCH: Provide accurate facts, but keep it CONCISE and to the point. Do not write long paragraphs unless explicitly asked.
+5. IMAGE ANALYSIS: If an image is uploaded, FIRST check if it contains Dates or Dry Fruits. If it does NOT, refuse immediately. If it does, analyze quality and freshness quickly and briefly.
 6. NO MARKDOWN: NEVER use markdown symbols (no **, no ##, no *, no backticks). Provide plain text formatted cleanly.
-7. LANGUAGE MATCHING: Reply in the exact same language the user writes in (Roman Urdu, Urdu script, or English).`;
+7. LANGUAGE MATCHING: Reply in the exact same language the user writes in (Roman Urdu, Urdu script, or English).
+8. SUPER FAST & CONCISE: Your answers MUST be extremely short, precise, and straight to the point. Maximum 3 to 4 sentences. Do NOT write essays.`;
 
 const getModel = (apiKey) => {
   const genAI = new GoogleGenerativeAI(apiKey);
@@ -40,8 +41,8 @@ router.post('/ai/chat', async (req, res) => {
       .map(h => ({ role: h.role, parts: [{ text: h.text }] }));
 
     const langInstruction = language === 'English'
-      ? "8. LANGUAGE MANDATE: You MUST reply STRICTLY in ENGLISH, regardless of the language the user types in."
-      : "8. LANGUAGE MANDATE: You MUST reply STRICTLY in the exact Urdu script (اردو رسم الخط), NOT Roman Urdu. You must write in actual Pakistani Urdu alphabet letters (e.g. السلام علیکم، آپ کیسے ہیں؟). Do not use English alphabet for Urdu.";
+      ? "9. LANGUAGE MANDATE: You MUST reply STRICTLY in ENGLISH, regardless of the language the user types in."
+      : "9. LANGUAGE MANDATE: You MUST reply STRICTLY in the exact Urdu script (اردو رسم الخط), NOT Roman Urdu. You must write in actual Pakistani Urdu alphabet letters (e.g. السلام علیکم، آپ کیسے ہیں؟). Do not use English alphabet for Urdu.";
 
     // Inject system prompt as first history message
     const fullHistory = [
@@ -115,8 +116,8 @@ router.post('/ai/image', async (req, res) => {
 
     const systemPrompt = `${SYSTEM_PROMPT}\n\nUser ne image share ki hai.`;
     const prompt = question
-      ? `${systemPrompt}\n\nUser ka sawaal: "${question}"\n\nImage ko detail mein analyze karo aur sawaal ka IN-DEPTH, FULL RESEARCHED jawab do (ONLY IF it is about dates/dry fruits, otherwise strictly refuse). No markdown symbols. Reply ${langInstruction}.`
-      : `${systemPrompt}\n\nIs image mein jo bhi hai uska complete aur IN-DEPTH research analysis karo:\n- Kya hai yeh?\n- Quality, freshness aur details kaisi hain?\n- Health benefits kya hain?\nAGAR YEH DATES YA DRY FRUITS NAHI HAIN TO STRICTLY REFUSE KARDO aur kaho ke main sirf dry fruits check karta hoon.\nReply ${langInstruction}. No markdown.`;
+      ? `${systemPrompt}\n\nUser ka sawaal: "${question}"\n\nImage ko briefly analyze karo aur sawaal ka FAST, SHORT, to-the-point jawab do (Max 3-4 sentences). No markdown symbols. Reply ${langInstruction}.`
+      : `${systemPrompt}\n\nIs image ka QUICK analysis karo:\n- Kya hai yeh?\n- Quality kaisi hai?\n- Health benefits (1 line)\nAGAR YEH DATES YA DRY FRUITS NAHI HAIN TO STRICTLY REFUSE KARDO.\nReply ${langInstruction} in max 4 sentences. Be extremely fast and concise. No markdown.`;
 
     const result = await model.generateContent([
       { inlineData: { data: imageBase64, mimeType: mimeType || 'image/jpeg' } },
