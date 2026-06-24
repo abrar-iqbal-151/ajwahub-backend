@@ -25,7 +25,7 @@ const getModel = (apiKey) => {
 // Chat route
 router.post('/ai/chat', async (req, res) => {
   try {
-    const { message, history, userId, userName } = req.body;
+    const { message, history, userId, userName, language } = req.body;
     if (!message) return res.status(400).json({ message: 'Message required' });
 
     const apiKey = process.env.GEMINI_API_KEY;
@@ -39,10 +39,14 @@ router.post('/ai/chat', async (req, res) => {
       .filter(h => h.text && (h.role === 'user' || h.role === 'model'))
       .map(h => ({ role: h.role, parts: [{ text: h.text }] }));
 
+    const langInstruction = language === 'English'
+      ? "8. LANGUAGE MANDATE: You MUST reply STRICTLY in ENGLISH, regardless of the language the user types in."
+      : "8. LANGUAGE MANDATE: You MUST reply STRICTLY in URDU (Roman Urdu or Urdu script), regardless of the language the user types in.";
+
     // Inject system prompt as first history message
     const fullHistory = [
-      { role: 'user', parts: [{ text: SYSTEM_PROMPT }] },
-      { role: 'model', parts: [{ text: 'Understood. I will follow all these instructions.' }] },
+      { role: 'user', parts: [{ text: SYSTEM_PROMPT + '\n\n' + langInstruction }] },
+      { role: 'model', parts: [{ text: 'Understood. I will follow all these instructions and strictly use the requested language.' }] },
       ...validHistory
     ];
 
@@ -64,7 +68,7 @@ router.post('/ai/chat', async (req, res) => {
 // Dedicated GymAI Diet/Recipe Generation Route
 router.post('/ai/gymai/generate', async (req, res) => {
   try {
-    const { prompt } = req.body;
+    const { prompt, language } = req.body;
     if (!prompt) return res.status(400).json({ message: 'Prompt required' });
 
     const apiKey = process.env.GEMINI_API_KEY;
@@ -72,15 +76,19 @@ router.post('/ai/gymai/generate', async (req, res) => {
 
     const model = getModel(apiKey);
     
+    const langInstruction = language === 'English' 
+      ? 'STRICTLY in clear ENGLISH.' 
+      : 'STRICTLY in clear ROMAN URDU (e.g. "Aapka wazan...").';
+
     const gymAiSystemPrompt = `You are GymAI, an expert nutritionist and fitness coach representing AjwaHub. Your job is to create detailed, healthy diet plans and recipes based strictly on the user's bodily stats. 
 Whenever possible or relevant, creatively incorporate Ajwa dates or premium dry fruits into the meals. 
-Write the entire response in clear Roman Urdu (e.g. "Aapka wazan..."). 
+Write the entire response ${langInstruction}
 IMPORTANT: DO NOT use any markdown symbols (no **, no ##, no *). Use simple bullet points (-) and spacing.
 Be extremely practical, safe, and professional about health.`;
 
     const fullHistory = [
       { role: 'user', parts: [{ text: gymAiSystemPrompt }] },
-      { role: 'model', parts: [{ text: 'Understood. I will act as GymAI and provide safe, practical diet plans and recipes in Roman Urdu without any markdown symbols.' }] },
+      { role: 'model', parts: [{ text: `Understood. I will act as GymAI and provide safe, practical diet plans and recipes without any markdown symbols, strictly in ${language || 'Roman Urdu'}.` }] },
     ];
 
     const chat = model.startChat({ history: fullHistory });
@@ -97,16 +105,18 @@ Be extremely practical, safe, and professional about health.`;
 // Image route
 router.post('/ai/image', async (req, res) => {
   try {
-    const { imageBase64, mimeType, question, userId, userName } = req.body;
+    const { imageBase64, mimeType, question, userId, userName, language } = req.body;
     if (!imageBase64) return res.status(400).json({ message: 'Image required' });
 
     const apiKey = process.env.GEMINI_API_KEY;
     const model = getModel(apiKey);
 
+    const langInstruction = language === 'English' ? 'STRICTLY in ENGLISH' : 'STRICTLY in ROMAN URDU';
+
     const systemPrompt = `${SYSTEM_PROMPT}\n\nUser ne image share ki hai.`;
     const prompt = question
-      ? `${systemPrompt}\n\nUser ka sawaal: "${question}"\n\nImage ko detail mein analyze karo aur sawaal ka IN-DEPTH, FULL RESEARCHED jawab do (ONLY IF it is about dates/dry fruits, otherwise strictly refuse). No markdown symbols.`
-      : `${systemPrompt}\n\nIs image mein jo bhi hai uska complete aur IN-DEPTH research analysis karo:\n- Kya hai yeh?\n- Quality, freshness aur details kaisi hain?\n- Health benefits kya hain?\nAGAR YEH DATES YA DRY FRUITS NAHI HAIN TO STRICTLY REFUSE KARDO aur kaho ke main sirf dry fruits check karta hoon.\nRoman Urdu mein lamba aur deeply researched jawab do. No markdown.`;
+      ? `${systemPrompt}\n\nUser ka sawaal: "${question}"\n\nImage ko detail mein analyze karo aur sawaal ka IN-DEPTH, FULL RESEARCHED jawab do (ONLY IF it is about dates/dry fruits, otherwise strictly refuse). No markdown symbols. Reply ${langInstruction}.`
+      : `${systemPrompt}\n\nIs image mein jo bhi hai uska complete aur IN-DEPTH research analysis karo:\n- Kya hai yeh?\n- Quality, freshness aur details kaisi hain?\n- Health benefits kya hain?\nAGAR YEH DATES YA DRY FRUITS NAHI HAIN TO STRICTLY REFUSE KARDO aur kaho ke main sirf dry fruits check karta hoon.\nReply ${langInstruction}. No markdown.`;
 
     const result = await model.generateContent([
       { inlineData: { data: imageBase64, mimeType: mimeType || 'image/jpeg' } },
