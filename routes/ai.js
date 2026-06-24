@@ -19,8 +19,8 @@ CRITICAL RULES FOR EVERY RESPONSE:
 
 const getModel = (apiKey) => {
   const genAI = new GoogleGenerativeAI(apiKey);
-  // Use gemini-2.5-flash for stable and fast response times
-  return genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
+  // Reverted to gemini-pro-latest because flash models are currently giving 503 errors
+  return genAI.getGenerativeModel({ model: 'gemini-pro-latest' });
 };
 
 // Chat route
