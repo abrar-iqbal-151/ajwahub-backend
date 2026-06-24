@@ -18,8 +18,8 @@ CRITICAL RULES FOR EVERY RESPONSE:
 
 const getModel = (apiKey) => {
   const genAI = new GoogleGenerativeAI(apiKey);
-  // Use full model path as required by this API key
-  return genAI.getGenerativeModel({ model: 'gemini-pro-latest' });
+  // Use gemini-1.5-flash for significantly faster response times
+  return genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
 };
 
 // Chat route
