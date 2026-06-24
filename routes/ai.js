@@ -41,7 +41,7 @@ router.post('/ai/chat', async (req, res) => {
 
     const langInstruction = language === 'English'
       ? "8. LANGUAGE MANDATE: You MUST reply STRICTLY in ENGLISH, regardless of the language the user types in."
-      : "8. LANGUAGE MANDATE: You MUST reply STRICTLY in URDU (Roman Urdu or Urdu script), regardless of the language the user types in.";
+      : "8. LANGUAGE MANDATE: You MUST reply STRICTLY in the exact Urdu script (اردو رسم الخط), NOT Roman Urdu. You must write in actual Pakistani Urdu alphabet letters (e.g. السلام علیکم، آپ کیسے ہیں؟). Do not use English alphabet for Urdu.";
 
     // Inject system prompt as first history message
     const fullHistory = [
@@ -78,7 +78,7 @@ router.post('/ai/gymai/generate', async (req, res) => {
     
     const langInstruction = language === 'English' 
       ? 'STRICTLY in clear ENGLISH.' 
-      : 'STRICTLY in clear ROMAN URDU (e.g. "Aapka wazan...").';
+      : 'STRICTLY in the exact Urdu script (اردو رسم الخط) using Arabic/Urdu alphabets (e.g. آپ کا ڈائٹ پلان...). DO NOT use Roman Urdu.';
 
     const gymAiSystemPrompt = `You are GymAI, an expert nutritionist and fitness coach representing AjwaHub. Your job is to create detailed, healthy diet plans and recipes based strictly on the user's bodily stats. 
 Whenever possible or relevant, creatively incorporate Ajwa dates or premium dry fruits into the meals. 
@@ -88,7 +88,7 @@ Be extremely practical, safe, and professional about health.`;
 
     const fullHistory = [
       { role: 'user', parts: [{ text: gymAiSystemPrompt }] },
-      { role: 'model', parts: [{ text: `Understood. I will act as GymAI and provide safe, practical diet plans and recipes without any markdown symbols, strictly in ${language || 'Roman Urdu'}.` }] },
+      { role: 'model', parts: [{ text: `Understood. I will act as GymAI and provide safe, practical diet plans and recipes without any markdown symbols, strictly in ${language === 'English' ? 'English' : 'Urdu script (اردو)'}.` }] },
     ];
 
     const chat = model.startChat({ history: fullHistory });
@@ -111,7 +111,7 @@ router.post('/ai/image', async (req, res) => {
     const apiKey = process.env.GEMINI_API_KEY;
     const model = getModel(apiKey);
 
-    const langInstruction = language === 'English' ? 'STRICTLY in ENGLISH' : 'STRICTLY in ROMAN URDU';
+    const langInstruction = language === 'English' ? 'STRICTLY in ENGLISH' : 'STRICTLY in the exact Urdu script (اردو رسم الخط). DO NOT use Roman Urdu';
 
     const systemPrompt = `${SYSTEM_PROMPT}\n\nUser ne image share ki hai.`;
     const prompt = question
@@ -144,7 +144,7 @@ router.post('/ai/compare-images', async (req, res) => {
     const apiKey = process.env.GEMINI_API_KEY;
     const model = getModel(apiKey);
 
-    const prompt = question || "Mera yeh sawal hai: In dono Ajwa khajooron mein farq batao. Kaun si achi hai aur kaun si kharab? Kya farq hai dono ki quality aur appearance mein? Roman Urdu mein clearly jawab do.";
+    const prompt = question || "Mera yeh sawal hai: In dono Ajwa khajooron mein farq batao. Kaun si achi hai aur kaun si kharab? Kya farq hai dono ki quality aur appearance mein? Urdu script (اردو رسم الخط) mein clearly jawab do. DO NOT use Roman Urdu.";
 
     const result = await model.generateContent([
       { inlineData: { data: image1Base64, mimeType: mimeType1 || 'image/jpeg' } },
