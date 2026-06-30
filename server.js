@@ -40,6 +40,7 @@ app.use('/api', require('./routes/shopProducts'));
 app.use('/api', require('./routes/wishlist'));
 app.use('/api', require('./routes/giftOrders'));
 app.use('/api', require('./routes/giftBoxes'));
+app.use('/api/gift-box-items', require('./routes/giftBoxItems'));
 app.use('/api', require('./routes/ai'));
 app.use('/api', require('./routes/orders'));
 app.use('/api', require('./routes/videos'));
