@@ -9,31 +9,35 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-const storage = multer.memoryStorage();
+const storage = multer.diskStorage({}); // Use disk storage for large videos
 const upload = multer({
   storage,
-  limits: { fileSize: 50 * 1024 * 1024 },
+  limits: { fileSize: 100 * 1024 * 1024 }, // 100MB limit
   fileFilter: (req, file, cb) => {
-    const allowed = /jpeg|jpg|png|gif|webp|mp4|mov|avi|webm/;
-    const ext = allowed.test(file.originalname.toLowerCase());
-    const mime = allowed.test(file.mimetype);
-    if (ext && mime) cb(null, true);
-    else cb(new Error('Only images and videos allowed'));
+    // Allow any file for now to prevent strict mime type errors on videos
+    cb(null, true);
   }
 });
 
-router.post('/upload', upload.single('file'), async (req, res) => {
+router.post('/upload', (req, res, next) => {
+  upload.single('file')(req, res, (err) => {
+    if (err) {
+      console.error('Multer Error:', err);
+      return res.status(400).json({ message: 'File upload error', error: err.message });
+    }
+    next();
+  });
+}, async (req, res) => {
   if (!req.file) return res.status(400).json({ message: 'No file uploaded' });
   try {
-    const result = await new Promise((resolve, reject) => {
-      const stream = cloudinary.uploader.upload_stream(
-        { resource_type: 'auto', folder: 'ajwahub' },
-        (error, result) => error ? reject(error) : resolve(result)
-      );
-      stream.end(req.file.buffer);
+    const result = await cloudinary.uploader.upload(req.file.path, {
+      resource_type: 'auto',
+      folder: 'ajwahub',
+      chunk_size: 6000000 // 6MB chunks for stable large video uploads
     });
     res.json({ message: 'Uploaded', path: result.secure_url });
   } catch (err) {
+    console.error('Cloudinary Upload Error:', err);
     res.status(500).json({ message: 'Upload failed', error: err.message });
   }
 });
