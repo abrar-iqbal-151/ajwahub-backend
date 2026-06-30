@@ -3,6 +3,8 @@ const mongoose = require('mongoose');
 const giftBoxSchema = new mongoose.Schema({
   name: { type: String, required: true },
   image: { type: String, default: '' },
+  innerImage: { type: String, default: '' },
+  products: { type: Array, default: [] },
   description: { type: String, default: '' },
   maxItems: { type: Number, default: 1 },
   itemType: { type: String, default: 'dates & dry fruits' },
