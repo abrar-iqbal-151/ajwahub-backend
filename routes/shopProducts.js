@@ -80,4 +80,15 @@ router.put('/shop-products/:id', verifyAdmin, async (req, res) => {
   } catch (err) { res.status(500).json({ message: err.message }); }
 });
 
+// Delete single product
+router.delete('/shop-products/:id', verifyAdmin, async (req, res) => {
+  try {
+    const isMongoId = /^[a-f\d]{24}$/i.test(req.params.id);
+    const query = isMongoId ? { _id: req.params.id } : { id: Number(req.params.id) };
+    const product = await ShopProduct.findOneAndDelete(query);
+    if (!product) return res.status(404).json({ message: 'Product not found' });
+    res.json({ message: 'Deleted', product });
+  } catch (err) { res.status(500).json({ message: err.message }); }
+});
+
 module.exports = router;
