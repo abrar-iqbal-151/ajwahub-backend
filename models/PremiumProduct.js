@@ -15,6 +15,7 @@ const PremiumProductSchema = new mongoose.Schema({
   totalStockKg: { type: Number, default: 0 },
   thresholdKg: { type: Number, default: 0 },
   autoStockManagement: { type: Boolean, default: false },
+  weights: { type: Array, default: [] },
 }, { timestamps: true });
 
 module.exports = mongoose.model('PremiumProduct', PremiumProductSchema);
